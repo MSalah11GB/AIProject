@@ -1,0 +1,442 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[total={16cm,25cm}, top=2.5cm, left=2cm, includefoot]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{lettrine}
+\usepackage{etoolbox}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\begin{document}
+\begin{center}
+    \textbf{\large{HANOI UNIVERSITY OF SCIENCE AND TECHNOLOGY}}\\[10pt]
+    \small{SCHOOL OF INFORMATION AND COMMUNICATION TECHNOLOGY}
+\end{center}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[height = 3cm]{logo-soict-hust-1 (1).png}
+\end{figure}
+\begin{center}
+    \textbf{Project report:}
+\end{center}
+\rule{\textwidth}{0.5pt}
+\begin{center}
+    \textbf{\large{HOUSE PRICE PREDICTION}}
+\end{center}
+\rule{\textwidth}{0.5pt}
+\begin{center}
+    \textbf{Guided by:}\\[10pt]
+    Associate Professor Pham Van Hai\\[20pt]
+    \textbf{Group members:}\\[10pt]
+    Pham Quang Anh - 20220071\\[10pt]
+    Vu Binh Minh - 20226058\\[10pt]
+    Ngo Minh Trung - 20226004\\[10pt]
+    Dang Trong Van - 20226072\\[10pt]
+    Nguyen Long Vu - 20226006\\[10pt]
+\end{center}
+\newpage
+\tableofcontents
+\newpage
+\section*{Abstract}
+House prices are a crucial factor in the real estate market, impacting both buyers and sellers. Accurately predicting house prices can be a significant challenge due to the complex interplay of various factors. This paper explores the potential of artificial intelligent techniques for house price prediction. We present a review of existing research in this field, highlighting the commonly used machine learning algorithms such as linear regression, decision trees, random forest. We discuss the importance of data preprocessing, feature selection, and model evaluation in achieving reliable predictions.
+\section{Introduction}
+\subsection{Context}
+House price prediction plays a significant role in making informed decisions for various stakeholders within the real estate market. It helps navigate the complexities of the market and fosters a more stable and efficient environment.
+\subsection{Motivation}
+House price prediction offers significant value to various stakeholders in the real estate market. By enabling informed decisions, improved strategies, and increased market transparency, house price prediction plays a crucial role in a healthy and efficient housing market.
+\section{Methodology}
+\subsection{ElasticNet Regression}
+ElasticNet is a regularization technique that combines both L1 and L2 regularizations to handle multicollinearity and select important features.
+While L2 uses the square value, L1 uses the absolute value. L1 has an interesting property that it can shrink the weights to 0, making useless parameters not included in the model.\\\\
+ElasticNet is a combination of both L1 and L2. It is particularly useful when the parameters are associated with the correlated variables, the model can shrink these parameters or remove them all at once.
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ElasticNet.png}
+\end{figure}
+\newpage
+\subsection{Decision Tree}
+Decision Tree is a tree-like structure where each node represents a feature, and the branches represent the decision rules. Consider a regression problem where we want to predict the price of a car based on its mileage and age.\\\\
+We build a tree by selecting a feature, trying different threshold values and compare them by a metric (usually MSE). 
+
+For example, for the CART (Classification And Regression Tree), the Variance Reduction metric is used, defined as the total reduction of the variance of the target variable $Y$ due to the split at this node: 
+
+\begin{equation}
+I_V(N) = \frac{1}{|S|^2} \sum_{i \in S} \sum_{j \in S} \frac{1}{2} (y_i - y_j)^2 -
+\left(
+\frac{|S_t|^2}{|S|^2} \frac{1}{|S_t|^2} \sum_{i \in S_t} \sum_{j \in S_t} \frac{1}{2} (y_i - y_j)^2 +
+\frac{|S_f|^2}{|S|^2} \frac{1}{|S_f|^2} \sum_{i \in S_f} \sum_{j \in S_f} \frac{1}{2} (y_i - y_j)^2
+\right)
+\end{equation}
+
+where $S, S_t, $ and $S_f$ are the set of pre-split sample indices, set of sample indices for which the split test is true, and set of sample indices for which the split test is false, respectively. The expression inside the bracket is the weighted-sum of variance after spliting, so the formula can be interpreted as
+\begin{equation*}
+    I_V(N)=\text{Variance before split} - \text{Weighted variance after split}
+\end{equation*}
+
+If we have multiple features, we compare the best threshold values for each of them. After that, select the best threshold to build a node and continue until a leaf node meets our preset stopping condition.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.6\textwidth]{DT.png}
+\end{figure}
+\subsection{Random Forest}
+The weakness of Decision Tree (DT) is that they tend to overfit the data and not perform well on the test set. Random Forest is an ensemble learning algorithm that combines the simplicity of DTs.
+It first creates a bootstrapped dataset (that is random sampling with replacement), then build a DT but using only a random subset of features at each level of the tree. Then this process repeats hundreds of times, creating a “forest” of DTs. Finally, the value is determined by taking the average of all results. The variety makes RF much more effective than individual trees.
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.6\textwidth]{randomforest_pic.jpg}
+\end{figure}
+\newpage
+\subsection{Gradient Boosting}
+
+Gradient Boosting combines weak learners into a single strong learner iteratively. To explain the mechanism, it is good to start from a more simple problem like least-square regression. Its goal is to learn a predictive model $\textbf{F(x)}$ by minimizing the Mean Square Error $\frac{1}{n}\sum_i (\hat{y_i}-y_i)^2$
+
+Consider a gradient boosting algorithm with $\mathbf{M}$ stages, at step $m$ $(1\leq m \leq M)$, with the current model $F_m$. In order to improve $F_m$, our algorithm adds a new estimator $h_m(x)$ (usually this is a Decision tree).
+\begin{equation}
+    F_{m+1}(x_i) = F_m(x_i) + h_m(x_i) = y_i
+\end{equation}
+
+Or equivalently
+\begin{equation}
+    h_m(x_i) = y_i - F_m(x_i)
+\end{equation}
+
+From this equation, we see that the goal is to fit the estimator $h_m$ with the value $y_i - F_m(x_i)$. The loss function of this estimator is $L(y,F(x)) = \frac{1}{2}(y - F(x))^2$, we want to minimize $J = \sum_i L(y_i,F(x_i))$. Here, $F(x_i)$ are parameters, we calculate the derivatives:
+\begin{equation}
+    \frac{\partial J}{\partial F(x_i)} = \frac{\partial \sum_i L(y_i,F(x_i))}{\partial F(x_i)} = \frac{\partial L(y_i,F(x_i))}{\partial F(x_i)} =  F_m(x_i) - y_i
+\end{equation}
+
+This result is similar to the gradient descent formula
+\begin{equation}
+    F(x_i) := F(x_i) - \gamma \frac{\partial J}{\partial F(x_i)}
+\end{equation}
+where $\gamma$ is the learning rate ($0\leq\lambda\leq1$)
+
+Furthermore, we can optimize $\gamma$ by finding the $\gamma_m$ value for which the loss function has a minimum:
+\begin{equation}
+    \gamma_m = \text{arg min} \sum_i L(y_i,F_m(x_i)) = \text{arg min} \sum_i L(y_i,F_{m-1}(x_i) + \gamma h_m(x_i)
+\end{equation}
+
+The new model formula:
+\begin{equation}
+    F_{m+1}(x_i) = F_m(x_i) + \gamma_m h_m(x_i)
+\end{equation}
+
+In general, more weak models $h_m$ are added as necessary to make the prediction more accurate over time.
+
+\subsection{XGBoost}
+XGBoost improves the “tree-building” part of Gradient Boosting, by several different methods:
+\begin{itemize}
+    \item The tree is built based on the gain metric, which is also used to prune the tree (if the gain value does not sufficient, we can remove the node - “pruning”)
+    \item The loss function uses Newton-Raphson method instead of the regular Gradient.
+
+    Recall the Gradient used in Gradient boosting:
+    \begin{equation}
+        \hat{g}_m(x_i) = \frac{\partial L(y_i,F(x_i))}{\partial F(x_i)}
+    \end{equation}
+
+    Newton-Raphson method also requires the Hessian:
+
+    \begin{equation}
+        \hat{h}_m(x_i) = \frac{\partial^2 L(y_i,F(x_i))}{\partial F(x_i)^2}
+    \end{equation}
+
+    Similar to normal Gradient Boosting, the goal is to fit the estimator $\phi_m$ with the value $\frac{\hat{g}_m(x_i)}{\hat{h}_m(x_i)}$
+
+    The new loss function to this problem is:
+    \begin{equation}
+        \hat{\phi}_m (x) = \frac{1}{2}\hat{h}_m(x_i)\left[\phi(x_i) - \frac{\hat{g}_m(x_i)}{\hat{h}_m(x_i)}\right]^2
+    \end{equation}
+
+    Finally, update the model:
+    \begin{equation}
+        \hat{f}_m(x) = \hat{f}_{m-1}(x) + \alpha \hat{\phi}_m (x) 
+    \end{equation}
+    
+    This may sound complicated, but for MSE loss, this is reduced to something called the similarity score - the ratio of (sum of residuals) squared and number of residuals
+    \item Regularization, by putting penalties to the Output Value
+\end{itemize}
+\section{State of art models}
+
+Several studies (\href{https://www.ijcsma.com/articles/literature-review-on-real-estate-value-prediction-using-machine-learning.pdf}{[1]}\href{https://rspsciencehub.com/article_23797.html}{[2]}) emphasize that the choice of model can influence data considerations. For instance, Random Forest generally handles various data types without extensive preprocessing, while models like Elastic Net (known for feature selection) might benefit from high-dimensional data containing many features.
+
+Studies consistently report the strong performance of XGBoost in house price prediction tasks. This is attributed to its optimized algorithms and ability to handle complex feature interactions, as discussed in \href{https://rspsciencehub.com/article_23797.html}{[2]},\href{https://www.researchgate.net/publication/350810698_Prediction_of_House_Price_Using_XGBoost_Regression_Algorithm}{[3]}. The interpretability of models is a recurring theme in the literature. Linear Regression offers interpretability but may struggle with complex relationships (\href{https://rspsciencehub.com/article_23797.html}{[2]}). Random Forest and Gradient Boosting offer a balance, while XGBoost and can be challenging to interpret due to their ensemble nature or complex architectures (\href{https://www.ijcsma.com/articles/literature-review-on-real-estate-value-prediction-using-machine-learning.pdf}{[1]}, \href{https://rspsciencehub.com/article_23797.html}{[2]}, \href{https://www.researchgate.net/publication/350810698_Prediction_of_House_Price_Using_XGBoost_Regression_Algorithm}{[3]}).
+
+Research suggests exploring methods to improve interpretability while maintaining prediction accuracy, particularly for models like Random Forest and XGBoost (\href{}{[2}, \href{https://www.researchgate.net/publication/350810698_Prediction_of_House_Price_Using_XGBoost_Regression_Algorithm}{3]}). Further research on feature engineering techniques specifically tailored to house price prediction tasks can benefit various models (\href{https://www.researchgate.net/publication/350810698_Prediction_of_House_Price_Using_XGBoost_Regression_Algorithm}{[3]}). Developing more interpretable ANN architectures and improving training efficiency for house price prediction remain active areas of research (e.g., \href{https://rspsciencehub.com/article_23797.html}{[2]}).
+
+\section{Model}
+\textbf{Steps to create the model}
+\begin{enumerate}
+    \item Import Libraries
+    \item Load Dataset
+    \item Data Cleaning
+    \item Exploratory Data Analysis
+    \item Feature Engineering
+    \item Dimensionality Reduction
+    \item Outlier Removal
+    \item Building a Model
+    \item Export model to pickle file
+    \item Deploy the User Interface
+\end{enumerate}
+\subsection{Import Libraries} 
+
+Pandas - a data manipulation and analysis software package built-in Python. It specifically provides data structures and functions for manipulating numerical tables.
+
+NumPy - NumPy is an abbreviation for Numerical Python, a package that is used to work with arrays. It also includes functions for working with linear algebra, Fourier transforms, and matrices.
+
+Matplotlib and Seaborn - Matplotlib is a charting toolkit for the Python programming language and its numerical mathematics extension NumPy. Matplotlib is a multi-platform data visualization library built on NumPy arrays and designed to work with the broader SciPy stack. Seaborn is used here to plot the correlation matrix.
+
+ScikitLearn and XGBoost - these libraries provide pre-build machine learning models, as well as also model-selection, allow us to choose the parameters set for optimal result. 
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.9\textwidth]{library.jpg}
+\end{figure}
+\newpage
+\subsection{Load Dataset}
+Dataset: \url{https://raw.githubusercontent.com/MSalah11GB/AIProject/main/Bengaluru_House_Data.csv}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=\textwidth]{dataset.jpg}
+\end{figure}
+
+Here we use Pandas head() to show the first 5 datapoints.  It is handy for rapidly determining whether your object contains the correct type of data.
+
+\subsection{Data cleaning}
+.info() is used to collect meaningful insights about the data. .isnull().sum() finds the missing values 
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.5\textwidth]{datacleaning.jpg}
+\end{figure} 
+\newpage
+Drop the unnecessary features, or features that lack a large portion of key values.
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{drop1.png}
+\end{figure}
+
+\subsection{Exploratory data analysis}  
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{column.jpg}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Skewness}: Almost all the distributions are heavily skewed to the right, indicating the presence of outliers or a non-normal distribution for these features.
+    \item \textbf{Outliers}: There are significant outliers in the data, especially in the total\_sqft, price, and price\_per\_sqft features. These outliers could be influential points and might need to be handled carefully during model training.
+    \item \textbf{Data Concentration}: The majority of the data points are concentrated in lower ranges for all features, with only a small number extending to higher values. This might suggest that most of the properties in the dataset are relatively modest, with a few luxury properties.
+\end{itemize}
+\newpage
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.6\textwidth]{correlation.jpg}
+\end{figure}
+\begin{itemize}
+    \item \textbf{High Correlation Between Size, Total Square Footage, and Bathrooms}: The strong positive correlation between size, total\_sqft, and bath suggests that larger houses tend to have more bathrooms and a larger total square footage.
+    \item \textbf{Price Correlations:}
+    \begin{itemize}
+        \item Price has moderate positive correlations with size, total\_sqft, and bath, indicating that larger houses with more bathrooms and more total square footage tend to be more expensive.
+        \item The strong positive correlation between price and price\_per\_sqft suggests that higher-priced houses tend to have a higher price per square foot.
+    \end{itemize}
+    \item \textbf{Price Per Square Foot}: The relatively lower correlations of price\_per\_sqft with size, total\_sqft, and bath compared to their correlations with price suggest that while the price per square foot does increase with larger and more feature-rich houses, the relationship is not as strong as the absolute price.
+\end{itemize}
+\subsection{Feature Engineering}
+Feature engineering is the process of creating new features from existing data, which is frequently dispersed over many linked tables. Feature engineering is collecting important information from data and consolidating it into a single table that can subsequently be utilized to train a machine learning model.
+
+Explore the total\_sqft feature:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{feat_engineer.png}
+\end{figure}
+
+The above shows that total\_sqft can be a range (e.g. 2100-2850). For such a case, we can just take an average of min and max value in the range. 
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{data_analysis.jpg}
+\end{figure}
+
+Add a new feature called price per square feet, it will be use later.
+
+Examine the location feature, which are categorical labels. We need to apply the dimensionality reduction technique here to reduce the number of locations.
+\newpage
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.4\textwidth]{location1.png}
+\end{figure}
+
+Finally, apply one-hot encoding to location feature.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{onehot.png}
+\end{figure}
+
+\subsection{Dimensionality Reduction}
+Dimensionality reduction methods are used to reduce the number of input variables in training data. When working with high-dimensional data, it is frequently beneficial to reduce the dimensionality by projecting the data to a lower-dimensional subspace that captures the data's "essence."
+
+Any location that has less than 10 data points should be tagged as another location. This way the number of categories can be reduced by a huge amount. Later on, when we do one-hot encoding, it will help us with having fewer dummy columns.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{location2.png}
+\end{figure}
+
+\subsection{Outlier Removal}
+As a data scientist when you have a conversation with your business manager (who has expertise in real estate), he will tell you that normally square ft per bedroom is 300 (i.e. 2 BHK apartment is minimum 600 sqft. If you have for example 400 sqft apartment with 2 BHK then that seems suspicious and can be removed as an outlier. We will remove such outliers by keeping our minimum threshold per BHK to be 300 sqft.
+
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{outlier1.png}
+\end{figure}
+
+We also want to modify the price per sqft values of outliers by use the mean value of houses in the same location.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{outlier2.png}
+\end{figure}
+
+
+\subsection{Building the Model} 
+We split the dataset into train and test set and write function to print evaluation metrics.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.7\textwidth]{evaluate1.png}
+\end{figure}
+
+For each model, we will use GridSearchCV to calibrate the parameters. To measure how good each model performs, we visualize the difference between the predicted value and test value, also known as 'residual'.
+
+\subsubsection{ElasticNet regression}
+Since models like Linear Regression are highly affected by the magnitude of inputs, we need to do an additional step of scaling the data.
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=\textwidth]{model1.png}
+\end{figure}
+
+Explanation of parameters:
+\begin{itemize}
+    \item alpha: modifies the effect of regularization factors
+    \item l1 ratio: modifies
+\end{itemize}
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.7\textwidth]{elastic.jpg}
+\end{figure}
+\newpage
+\subsubsection{Decision Tree}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{decisiontree.png}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.7\textwidth]{decisiontree.jpg}
+\end{figure}
+\newpage
+\subsubsection{Random Forest}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{rf2.png}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.7\textwidth]{randomforest.jpg}
+\end{figure}
+\subsubsection{Gradient Boosting}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{gb.png}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.7\textwidth]{gradientboosting.jpg}
+\end{figure}
+\newpage
+\subsubsection{XGBoost} 
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.8\textwidth]{xgb.png}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.7\textwidth]{XGboost.jpg}
+\end{figure}
+\subsubsection{Evaluation for each model}
+
+Here are different metrics that we used in the evaluation process:
+
+\textbf{Mean Absolute Error (MAE)} measures the average magnitude of the errors in a set of predictions, without considering their direction. It is calculated as the average of the absolute differences between predicted values and actual values:
+\[
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+\]
+where \( y_i \) are the actual values and \( \hat{y}_i \) are the predicted values.
+
+\textbf{Mean Squared Error (MSE)} calculates the average squared difference between predicted and actual values. MSE gives more weight to large errors and is computed as:
+\[
+\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+\]
+
+\textbf{Root Mean Squared Error (RMSE)} is the square root of the MSE, providing a measure of the average magnitude of error in the same units as the target variable. It is formulated as:
+\[
+\text{RMSE} = \sqrt{\text{MSE}}
+\]
+
+\textbf{R² score (R-squared)} represents the proportion of the variance in the dependent variable that is predictable from the independent variables. It is interpreted as the goodness of fit of the model and ranges from 0 to 1, with 1 indicating perfect predictions:
+\[
+R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
+\]
+where \( \bar{y} \) is the mean of the observed data.
+
+\textbf{Mean Absolute Percentage Error (MAPE)} measures the size of the error in percentage terms. It is particularly useful when the magnitude of errors is important and needs to be evaluated relative to the size of the actual values:
+\[
+\text{MAPE} = \frac{1}{n} \sum_{i=1}^{n} \left| \frac{y_i - \hat{y}_i}{y_i} \right| \times 100
+\]
+MAPE is expressed as a percentage, making it easier to interpret across different datasets.
+
+These metrics play essential roles in evaluating predictive models, each offering unique insights into different aspects of model performance. The choice of metric depends on the specific goals of the analysis and the nature of the data being modeled.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=\textwidth]{evaluation_model.jpg}
+\end{figure}
+
+Overall, the Random Forest model performs the for all the evaluation metrics, while the ElasticNet performs the worst (possbibly due to the non-linearity of the data).\\\\
+Interestingly, more complex models like Gradient Boosting and XGBoost did not perform better, even though it is one of the state-of-art algorithms. This may due to specific characteristics of the model, with little numerical features.
+
+\subsection{Export the model to pickle files}
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=0.5\textwidth]{pickle.png}
+\end{figure}
+
+\newpage
+\subsection{Deploy the User Interface}
+
+For this project, we'll use StreamLit package from Python to build a simple User Interface. Details on how to deploy and use the model will be attached along with all the necessary files of the project.
+
+\begin{figure}[tbh]
+    \centering
+    \includegraphics[width=\textwidth]{streamlit.png}
+\end{figure}
+
+\newpage
+\section{Conclusion}
+Predicting house prices with machine learning offers a powerful tool for navigating the complexities of the real estate market.  While no model can guarantee perfect accuracy due to the ever-changing nature of the market and the influence of unforeseen factors, machine learning can significantly improve our ability to estimate value.\\\\
+This exploration has highlighted the potential of various algorithms like linear regression, random forest, and support vector machines. By carefully selecting and evaluating these models on relevant datasets, we can identify the most effective approach for a specific market or property type.
+
+\section*{References}
+\begin{itemize}
+    \item Breiman, Leo; Friedman, J. H.; Olshen, R. A.; Stone, C. J. (1984). Classification and regression trees. Monterey, CA
+    \item \href{https://www.chengli.io/tutorials/gradient_boosting.pdf}{Exposition of gradient boosting by Cheng Li.}
+    \item \href{https://www.kaggle.com/datasets/amitabhajoy/bengaluru-house-price-data/data?select=Bengaluru_House_Data.csv}{Public dataset by Kaggle}
+    \item \href{https://www.ijcsma.com/articles/literature-review-on-real-estate-value-prediction-using-machine-learning.pdf}{Literature Review on Real Estate Value Prediction Using Machine Learning Akshay Babu, Dr. Anjana S Chandran}
+    \item \href{https://rspsciencehub.com/article_23797.html}{A Literature Review on Using Machine Learning Algorithm to Predict House Prices -Tanmoy Dhar; Manikandan P }
+    \item \href{https://www.researchgate.net/publication/350810698_Prediction_of_House_Price_Using_XGBoost_Regression_Algorithm}{Prediction of House Price Using XGBoost Regression Algorithm - January 2021, Turkish Journal of Computer and Mathematics Education (TURCOMAT) 12(2):2151-2155}
+\end{itemize}
+\end{document}
